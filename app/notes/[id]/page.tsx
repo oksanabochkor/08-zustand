@@ -1,31 +1,38 @@
+
+
 import type { Metadata } from "next";
 import { fetchNoteById } from "@/lib/api";
-import { notFound } from "next/navigation";
 
 type Props = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
-export async function generateMetadata({
-  params,
-}: Props): Promise<Metadata> {
-  try {
-    const note = await fetchNoteById(params.id);
+export async function generateMetadata(
+  { params }: Props
+): Promise<Metadata> {
+  const { id } = await params;
 
-    const title = note.title || "Note details";
-    const description = note.content?.slice(0, 100) || "Note description";
+  try {
+    const note = await fetchNoteById(id);
+
+    const title = note.title;
+    const description = note.content?.slice(0, 100);
 
     return {
       title: `${title} | NoteHub`,
       description,
+
       openGraph: {
         title: `${title} | NoteHub`,
         description,
-        url: `https://08-zustand-mu-lime.vercel.app/notes/${params.id}`,
+        url: `https://08-zustand-mu-lime.vercel.app/notes/${id}`,
+        
         images: [
-          "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+          {
+            url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+          },
         ],
       },
     };
@@ -36,21 +43,3 @@ export async function generateMetadata({
     };
   }
 }
-
-export default async function Page({ params }: Props) {
-  const note = await fetchNoteById(params.id);
-
-  if (!note) {
-    notFound(); // 👈 правильний Next.js спосіб
-  }
-
-  return (
-    <main>
-      <h1>{note.title}</h1>
-      <p>{note.content}</p>
-    </main>
-  );
-}
-
-
-

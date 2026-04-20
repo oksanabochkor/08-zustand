@@ -5,12 +5,15 @@ import css from "./CreateNote.module.css";
 export const metadata: Metadata = {
   title: "Create note | NoteHub",
   description: "Create a new note in NoteHub",
+
   openGraph: {
     title: "Create note | NoteHub",
     description: "Create a new note in NoteHub",
-    url: "https://your-site-url.com/notes/action/create",
+    url: "https://08-zustand-mu-lime.vercel.app/notes/action/create",
     images: [
-      "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+      {
+        url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+      },
     ],
   },
 };
