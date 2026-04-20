@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { fetchNoteById } from "@/lib/api";
+import { notFound } from "next/navigation";
 
 type Props = {
   params: {
@@ -7,7 +8,9 @@ type Props = {
   };
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: Props): Promise<Metadata> {
   try {
     const note = await fetchNoteById(params.id);
 
@@ -33,4 +36,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 }
+
+export default async function Page({ params }: Props) {
+  const note = await fetchNoteById(params.id);
+
+  if (!note) {
+    notFound(); // 👈 правильний Next.js спосіб
+  }
+
+  return (
+    <main>
+      <h1>{note.title}</h1>
+      <p>{note.content}</p>
+    </main>
+  );
+}
+
+
 
