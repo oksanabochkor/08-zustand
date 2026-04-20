@@ -1,33 +1,29 @@
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
+import type { Metadata } from "next";
 
-import { fetchNotes } from "@/lib/api";
-import NotesClient from "./Notes.client";
+type Props = {
+  params: {
+    slug?: string[];
+  };
+};
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug: string[] }>;
-}) {
-  const { slug } = await params;
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const filter = params.slug?.join(" / ") || "All notes";
 
-  const tag = slug?.[0] === "all" ? "" : slug?.[0] || "";
+  const title = `Notes filtered by: ${filter} | NoteHub`;
+  const description = `Browse notes filtered by ${filter}`;
 
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery({
-    queryKey: ["notes", tag, 1],
-    queryFn: () => fetchNotes(tag, 1),
-  });
-
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <NotesClient tag={tag} />
-    </HydrationBoundary>
-  );
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `https://your-site-url.com/notes/filter/${params.slug?.join("/")}`,
+      images: [
+        "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+      ],
+    },
+  };
 }
 
 

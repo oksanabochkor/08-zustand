@@ -3,13 +3,12 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
+import Link from "next/link";
 
 import { fetchNotes } from "@/lib/api";
 
 import SearchBox from "@/components/SearchBox/SearchBox";
 import NoteList from "@/components/NoteList/NoteList";
-import Modal from "@/components/Modal/Modal";
-import NoteForm from "@/components/NoteForm/NoteForm";
 import Pagination from "@/components/Pagination/Pagination";
 
 interface Props {
@@ -19,7 +18,6 @@ interface Props {
 export default function NotesClient({ tag }: Props) {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [debouncedSearch] = useDebounce(search, 300);
 
@@ -41,9 +39,10 @@ export default function NotesClient({ tag }: Props) {
         }}
       />
 
-      <button onClick={() => setIsModalOpen(true)}>
+      {/* ✅ ЗАМІНА КНОПКИ НА LINK */}
+      <Link href="/notes/action/create">
         Create note
-      </button>
+      </Link>
 
       {data?.notes?.length ? (
         <NoteList notes={data.notes} />
@@ -51,22 +50,17 @@ export default function NotesClient({ tag }: Props) {
         <p>No notes found</p>
       )}
 
-    {data?.totalPages && data.totalPages > 1 && (
-  <Pagination
-    page={page}
-    totalPages={data.totalPages}
-    onPageChange={setPage}
-  />
-      )}
-
-      {isModalOpen && (
-        <Modal onClose={() => setIsModalOpen(false)}>
-          <NoteForm onClose={() => setIsModalOpen(false)} />
-        </Modal>
+      {data?.totalPages && data.totalPages > 1 && (
+        <Pagination
+          page={page}
+          totalPages={data.totalPages}
+          onPageChange={setPage}
+        />
       )}
     </div>
   );
 }
+
 
 
 
