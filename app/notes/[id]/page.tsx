@@ -13,16 +13,13 @@ export async function generateMetadata(
   try {
     const note = await fetchNoteById(id);
 
-    const title = note.title;
-    const description = note.content?.slice(0, 100);
-
     return {
-      title: `${title} | NoteHub`,
-      description,
+      title: `${note.title} | NoteHub`,
+      description: note.content?.slice(0, 100),
 
       openGraph: {
-        title: `${title} | NoteHub`,
-        description,
+        title: `${note.title} | NoteHub`,
+        description: note.content?.slice(0, 100),
         url: `https://08-zustand-mu-lime.vercel.app/notes/${id}`,
         images: [
           {
@@ -38,4 +35,23 @@ export async function generateMetadata(
     };
   }
 }
+
+// 🔥 ОЦЕ ГОЛОВНЕ, ЧОГО НЕМА У ТЕБЕ
+export default async function Page({
+  params,
+}: {
+  params: Promise<Params>;
+}) {
+  const { id } = await params;
+
+  const note = await fetchNoteById(id);
+
+  return (
+    <main>
+      <h1>{note.title}</h1>
+      <p>{note.content}</p>
+    </main>
+  );
+}
+
 
